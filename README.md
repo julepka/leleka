@@ -11,6 +11,11 @@ var credentials = {
 <h5>How to find credentials information?</h5>
 <p>PayPal developer account -> Dashboard -> Accounts -> Choose user -> Profile -> API Credentials</p>
 
+<p>Change the next code if you need to set other start date.</p>
+```js
+{StartDate: '2015-01-28T02:27:44.681Z'}
+```
+
 <h5>Output example</h5>
 ```
 TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT
