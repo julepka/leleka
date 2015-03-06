@@ -5,12 +5,12 @@
 <h5>Output example:</h5>
 ```
 TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT,NETUSD
-Thu Mar 05 2015 17:15:57 GMT-0800 (PST),GMT,Payment,julepka-buyer@gmail.com,test buyer,9AJ293798E847840B,Completed,140,USD,0,140,140
-Thu Mar 05 2015 17:17:08 GMT-0800 (PST),GMT,Payment,julepka-buyer@gmail.com,test buyer,1TF06214GY283364B,Completed,-10,USD,0,-10,-10
-Thu Mar 05 2015 17:17:31 GMT-0800 (PST),GMT,Payment,julepka-buyer-japan@gmail.com,Potapenko Iuliia,2WP27192A1998350K,Completed,-15,USD,-0.08,-15.08,-15.08
-Thu Mar 05 2015 17:18:48 GMT-0800 (PST),GMT,Payment,julepka-buyer-japan@gmail.com,Potapenko Iuliia,25229977L42350035,Completed,450,JPY,-58,392,3.84
-Thu Mar 05 2015 17:21:33 GMT-0800 (PST),GMT,Payment,julepka-buyer@gmail.com,test buyer,2D083245F3777525B,Completed,55,USD,0,55,55
-Thu Mar 05 2015 17:27:30 GMT-0800 (PST),GMT,Payment,julepka-buyer2@gmail.com,Kim Sutton,8MB28355F7181061T,Completed,320,USD,0,320,320
+Thu Mar 05 2015 17:15:57 GMT-0800 (PST),GMT,Payment,buyer@gmail.com,test buyer,9AJ293798E847840B,Completed,140,USD,0,140,140
+Thu Mar 05 2015 17:17:08 GMT-0800 (PST),GMT,Payment,buyer@gmail.com,test buyer,1TF06214GY283364B,Completed,-10,USD,0,-10,-10
+Thu Mar 05 2015 17:17:31 GMT-0800 (PST),GMT,Payment,buyer-japan@gmail.com,Pota I,2WP27192A1998350K,Completed,-15,USD,-0.08,-15.08,-15.08
+Thu Mar 05 2015 17:18:48 GMT-0800 (PST),GMT,Payment,buyer-japan@gmail.com,Pota I,25229977L42350035,Completed,450,JPY,-58,392,3.84
+Thu Mar 05 2015 17:21:33 GMT-0800 (PST),GMT,Payment,buyer@gmail.com,test buyer,2D083245F3777525B,Completed,55,USD,0,55,55
+Thu Mar 05 2015 17:27:30 GMT-0800 (PST),GMT,Payment,buyer2@gmail.com,Kim Sutton,8MB28355F7181061T,Completed,320,USD,0,320,320
 ```
 <p>You can download this output example in project files - output.csv</p>
 
