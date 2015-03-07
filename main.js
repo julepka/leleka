@@ -22,7 +22,11 @@ paypal.call('TransactionSearch', {StartDate: input.startdate}, processTransactio
 
 function processTransactions(error, transactions) {
     if (error) {
-        console.error('API call error: ' + error);
+        console.error('Error in calling paypal-classic-api. API call error: ' + error);
+    } else if (transactions === undefined) {
+        console.log('Error getting transactions. Transactions list is undefined');
+    } else if (transactions.length === 0) {
+        console.log('Transactions list is empty');
     } else {
         convert(clean(transactions));
     }
@@ -40,6 +44,8 @@ function clean (transaction) {
             result.push(transaction[i]);
 
         } else if (isConvertOut(transaction[i])) {
+            //TODO: if flag==empty || flag[n]!='flag' -> error
+            //TODO: check if timerange has initial transaction for this convertation
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[i].AMT === -transaction[flag[j]].NETAMT &
                     transaction[i].CURRENCYCODE === transaction[flag[j]].CURRENCYCODE &
@@ -49,6 +55,8 @@ function clean (transaction) {
             }
 
         } else if (isConvertIn(transaction[i])) {
+            //TODO: if flag==empty || flag[n]!='flag2' -> error
+            //TODO: check if timerange has initial transaction and charging one for this convertation
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[flag[j]].NETUSD === "flag2") {
                     transaction[flag[j]].NETUSD = transaction[i].NETAMT;
@@ -61,6 +69,7 @@ function clean (transaction) {
             result.push(transaction[i]);
         }
     }
+    //TODO: check if flag[] is empty
     return result;
 }
 
@@ -93,6 +102,7 @@ function isConvertIn(trans) {
 }
 
 function convert(data) {
+    //TODO: check if data is not empty
     var table = [];
     var headers = getHeader(data)
     table.push(headers);
@@ -108,6 +118,7 @@ function convert(data) {
         table.push(row);
     }
 
+    //TODO: what error can be here?
     csv.writeToString(table, {
         headers: true
     }, function (err, data) {
@@ -118,6 +129,7 @@ function convert(data) {
 function getHeader(data) {
     var result = Object.keys(data[0]);
     for (var i = 1; i < data.length; i++) {
+        //TODO: check index to be in correct range
         var keys = Object.keys(data[i]);
         for (var j = 0; j < keys.length; j++) {
             if (result.indexOf(keys[j]) == -1) {
