@@ -39,11 +39,11 @@ Mon Mar 09 2015 19:56:35 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Per
 
 ##### TODOs
 
-- Error processing
+- Error processing.
 
-- Troubles with identifying TYPE field, especially for automatic currency conversion (I need real examples that I can't get)
+- Troubles with identifying TYPE field, especially for automatic currency conversion. I need an example of real data to make it work correctly.
 
-- Processing currency conversion that was make by hands (not by accepting the payment). Add new transactions to test this.
+- Processing currency conversion that was made by hands (not by accepting the payment, but by requesting to convert currency you already have). Add new transactions to test this.
 
 - Launch app online
 
