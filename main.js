@@ -6,21 +6,27 @@
 
 var PayPal = require('paypal-classic-api');
 var csv = require('fast-csv');
-var input = require('./input'); // DELETE THIS LINE
+//var input = require('./input'); // DELETE THIS LINE
 
 // ENTER YOUR ACCOUNT CREDENTIALS
 var credentials = {
-    username: input.username,
-    password: input.password,
-    signature: input.signature
+    username: 'abcdefg_api1.mail.com',
+    password: 'QHZE9GW6LZ2GTQWQ',
+    signature: 'AQU0e5vuZCvSg-XJploSa.sGUDlpAkarGzBHs8tpshLhz1LRC8z.qaGH'
 };
 
 var paypal = new PayPal(credentials);
 
+function makeCSV(callback) {
 // CHANGE STARTDATE, EXAMPLE: '2015-03-05T02:27:44.681Z'
-paypal.call('TransactionSearch', {StartDate: input.startdate}, processTransactions);
+    paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
+        processTransactions(error,transactions.objects,callback);
+    });
+}
+exports.makeCSV = makeCSV;
 
-function processTransactions(error, transactions) {
+function processTransactions(error, transactions, callback) {
+    console.log(transactions);
     if (error) {
         console.error('Error in calling paypal-classic-api. API call error: ' + error);
     } else if (transactions === undefined) {
@@ -28,7 +34,7 @@ function processTransactions(error, transactions) {
     } else if (transactions.length === 0) {
         console.log('Transactions list is empty');
     } else {
-        convert(clean(transactions));
+        convert(clean(transactions), callback);
     }
 };
 
@@ -83,7 +89,8 @@ function isOtherCurrency(trans) {
 
 function isConvertOut(trans) {
     if (trans.EMAIL === undefined &
-        trans.TYPE.substring(0, 9) === "Transfer " &
+        //trans.TYPE.substring(0, 9) === "Transfer " &
+        trans.TYPE === 'Currency Conversion (debit)' &
         trans.NAME === "To U.S. Dollar" &
         trans.AMT < 0 & trans.NETAMT < 0 &
         trans.CURRENCYCODE !== "USD") {
@@ -93,7 +100,8 @@ function isConvertOut(trans) {
 
 function isConvertIn(trans) {
     if (trans.EMAIL === undefined &
-        trans.TYPE.substring(0, 9) === "Transfer " &
+        //trans.TYPE.substring(0, 9) === "Transfer " &
+        trans.TYPE === 'Currency Conversion (credit)' &
         trans.NAME.substring(0, 5) === "From " &
         trans.AMT > 0 & trans.NETAMT > 0 &
         trans.CURRENCYCODE === "USD") {
@@ -101,7 +109,7 @@ function isConvertIn(trans) {
     } else return false;
 }
 
-function convert(data) {
+function convert(data, callback) {
     //TODO: check if data is not empty
     var table = [];
     var headers = getHeader(data)
@@ -122,7 +130,10 @@ function convert(data) {
     csv.writeToString(table, {
         headers: true
     }, function (err, data) {
+        var fs = require('fs');
+        fs.writeFileSync('output.csv', data);
         return console.log(data);
+        callback();
     });
 }
 

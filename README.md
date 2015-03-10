@@ -1,55 +1,50 @@
-# leleka
-<h3>New version</h3>
-<p>Combines not-USD transactions and converting to USD transactions in a single transaction. Adds new column NETUSD for USD equivalent of each transaction.</p>
-<p>No error processing yet.</p>
-<h5>Output example:</h5>
+### Leleka
+
+In main.js change API credentials and StartDate according to your PayPal account information.
+
+Latest version has server.js and soon you will be able to access the app online.
+
+#### Output example
+
+Take a look at output file output.csv. Github opens it in readable form. Here is an example of output file:
+
 ```
 TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT,NETUSD
-Thu Mar 05 2015 17:15:57 GMT-0800 (PST),GMT,Payment,buyer@gmail.com,test buyer,9AJ293798E847840B,Completed,140,USD,0,140,140
-Thu Mar 05 2015 17:17:08 GMT-0800 (PST),GMT,Payment,buyer@gmail.com,test buyer,1TF06214GY283364B,Completed,-10,USD,0,-10,-10
-Thu Mar 05 2015 17:17:31 GMT-0800 (PST),GMT,Payment,buyer-japan@gmail.com,Pota I,2WP27192A1998350K,Completed,-15,USD,-0.08,-15.08,-15.08
-Thu Mar 05 2015 17:18:48 GMT-0800 (PST),GMT,Payment,buyer-japan@gmail.com,Pota I,25229977L42350035,Completed,450,JPY,-58,392,3.84
-Thu Mar 05 2015 17:21:33 GMT-0800 (PST),GMT,Payment,buyer@gmail.com,test buyer,2D083245F3777525B,Completed,55,USD,0,55,55
-Thu Mar 05 2015 17:27:30 GMT-0800 (PST),GMT,Payment,buyer2@gmail.com,Kim Sutton,8MB28355F7181061T,Completed,320,USD,0,320,320
-```
-<p>You can download this output example in project files - output.csv</p>
-
-<h3>Previous version</h3>
-<p>The following fields should be changed according to account information.</p>
-
-```js
-var credentials = {
-    username: 'EMAIL.mail.com',
-    password: 'PASSWORD',
-    signature: 'SIGNATURE'
-};
-```
-<h5>How to find credentials information?</h5>
-<p>PayPal developer account -> Dashboard -> Accounts -> Choose user -> Profile -> API Credentials</p>
-
-<p>Change the next code if you need to set other start date.</p>
-```js
-{StartDate: '2015-01-28T02:27:44.681Z'}
-```
-
-<h5>Output example</h5>
-```
-TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT
-Tue Mar 03 2015 19:56:26 GMT-0800 (PST),GMT,Transfer (credit),,From Japanese Yen,8C8061047G215512E,Completed,2.04,USD,0,2.04
-Tue Mar 03 2015 19:56:26 GMT-0800 (PST),GMT,Transfer (debit),,To U.S. Dollar,6VX27482DC953890F,Completed,-208,JPY,0,-208
-Tue Mar 03 2015 19:53:21 GMT-0800 (PST),GMT,Payment,buyjapan@m.com,Sun Kim,9F081575VG311020N,Completed,200,JPY,-48,152
-Thu Feb 26 2015 20:00:01 GMT-0800 (PST),GMT,Payment,buyjapan@m.com,Sun Kim,0JL138973J4267114,Completed,100,JPY,-44,56
-Thu Feb 26 2015 19:53:21 GMT-0800 (PST),GMT,Payment,buyjapan@m.com,Sun Kim,0Y730605XS335043T,Completed,-12,USD,-0.06,-12.06
-Thu Feb 26 2015 19:41:24 GMT-0800 (PST),GMT,Transfer,,PayPal,65L489117V5191606,Completed,500,USD,0,500
+Mon Mar 09 2015 19:04:00 GMT-0700 (PDT),GMT,Transfer,,PayPal,9YW45438SY271923M,Completed,1000,USD,0,1000,1000
+Mon Mar 09 2015 19:25:21 GMT-0700 (PDT),GMT,Payment,buyer-australia@mail.com,Jim Smith,1H133144P76734012,Completed,200,AUD,-8.1,191.9,172.78
+Mon Mar 09 2015 19:29:11 GMT-0700 (PDT),GMT,Payment,buyer-usa-1@mail.com,Bill Forest,73X14788UW6300353,Completed,100,USD,-3.2,96.8,96.8
+Mon Mar 09 2015 19:30:55 GMT-0700 (PDT),GMT,Payment,buyer-turkey@mail.com,Zaur Aliev,5D667625DJ142730X,Completed,100,USD,-4.2,95.8,95.8
+Mon Mar 09 2015 19:32:21 GMT-0700 (PDT),GMT,Payment,buyer-usa-2@mail.com,Donna Nelton,3XP0992236919601T,Completed,200,USD,0,200,200
+Mon Mar 09 2015 19:34:27 GMT-0700 (PDT),GMT,Payment,buyer-mexico@mail.com,Oscar Mendoza,8YU99125TN2711312,Completed,800,MXN,-35.2,764.8,57.06
+Mon Mar 09 2015 19:35:34 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Person,81535355733575420,Completed,300,USD,-9,291,291
+Mon Mar 09 2015 19:37:45 GMT-0700 (PDT),GMT,Payment,buyer-austria@mail.com,Thomas Mall,46P885982X544652G,Completed,100,EUR,0,100,129.36
+Mon Mar 09 2015 19:38:38 GMT-0700 (PDT),GMT,Payment,buyer-brazil@mail.com,Pera Tarra,2XJ92299UJ3426725,Completed,300,BRL,-12.1,287.9,122.74
+Mon Mar 09 2015 19:40:00 GMT-0700 (PDT),GMT,Payment,buyer-malaysia@mail.com,Idea Mako,1AR663506K054802C,Completed,70,USD,-3.03,66.97,66.97
+Mon Mar 09 2015 19:41:13 GMT-0700 (PDT),GMT,Payment,buyer-russia@mail.com,Makarova Anna,9T1150232C883021U,Completed,200,RUB,-17.8,182.2,5.46
+Mon Mar 09 2015 19:42:00 GMT-0700 (PDT),GMT,Payment,buyer-usa-1@mail.com,Bill Forest,8M9456729W876990H,Completed,110,USD,0,110,110
+Mon Mar 09 2015 19:42:38 GMT-0700 (PDT),GMT,Payment,buyer-usa-2@mail.com,Donna Nelton,3RP250868W624473L,Completed,210,USD,-6.39,203.61,203.61
+Mon Mar 09 2015 19:44:24 GMT-0700 (PDT),GMT,Payment,buyer-canada@mail.com,Emma Kholt,13T44442AS599440D,Completed,400,CAD,-15.9,384.1,361.84
+Mon Mar 09 2015 19:45:16 GMT-0700 (PDT),GMT,Payment,buyer-japan@mail.com,Izumi Tamako,5P351626EW861452N,Completed,100,JPY,-44,56,0.54
+Mon Mar 09 2015 19:47:21 GMT-0700 (PDT),GMT,Payment,buyer-israel@mail.com,Makh Asu,69P206210K0014213,Completed,900,ILS,-36.3,863.7,235.43
+Mon Mar 09 2015 19:48:09 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Person,4YP5038868719023S,Completed,310,USD,0,310,310
+Mon Mar 09 2015 19:50:02 GMT-0700 (PDT),GMT,Payment,seller-usa@mail.com,"Gabriella Beltham's Test Store",43J07666KT393161U,Completed,-1000,USD,0,-1000,-1000
+Mon Mar 09 2015 19:51:00 GMT-0700 (PDT),GMT,Payment,buyer-usa-1@mail.com,Bill Forest,9BN151456D4075828,Completed,120,USD,-3.78,116.22,116.22
+Mon Mar 09 2015 19:51:51 GMT-0700 (PDT),GMT,Payment,buyer-austria@mail.com,Thomas Mall,4TR746271A852364F,Completed,450,EUR,0,450,582.13
+Mon Mar 09 2015 19:53:21 GMT-0700 (PDT),GMT,Payment,seller-spain@mail.com,"Fernando Horlonzola's Test Store",5MW80652TS8631036,Completed,-1000,USD,0,-1000,-1000
+Mon Mar 09 2015 19:54:19 GMT-0700 (PDT),GMT,Payment,buyer-canada@mail.com,Emma Kholt,06M93127SH4827501,Completed,450,CAD,-17.85,432.15,407.11
+Mon Mar 09 2015 19:55:15 GMT-0700 (PDT),GMT,Payment,buyer-australia@mail.com,Jim Smith,8CC30633NU038083D,Completed,250,AUD,0,250,225.09
+Mon Mar 09 2015 19:55:59 GMT-0700 (PDT),GMT,Payment,buyer-usa-2@mail.com,Donna Nelton,7KF59618TR0061705,Completed,225,USD,0,225,225
+Mon Mar 09 2015 19:56:35 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Person,5K319446S05858224,Completed,130,USD,0,130,130
 ```
 
-<h5>Output example in readable form</h5>
+##### TODOs
 
-TIMESTAMP (shortened) | TIMEZONE | TYPE | EMAIL | NAME | TRANSACTIONID | STATUS | AMT | CURRENCYCODE | FEEAMT | NETAMT
---------------------- | -------- | ---- | ----- | ---- | ------------- | ------ | --- | ------------ | ------ | ------
-Mar 03 2015 19:56:26|GMT|Transfer (credit)||From Japanese Yen|8C8061047G215512E|Completed|2.04|USD|0|2.04
-Mar 03 2015 19:56:26|GMT|Transfer (debit)||To U.S. Dollar|6VX27482DC953890F|Completed|-208|JPY|0|-208
-Mar 03 2015 19:53:21|GMT|Payment|buyjapan@m.com|Sun Kim|9F081575VG311020N|Completed|200|JPY|-48|152
-Feb 26 2015 20:00:01|GMT|Payment|buyjapan@m.com|Sun Kim|0JL138973J4267114|Completed|100|JPY|-44|56
-Feb 26 2015 19:53:21|GMT|Payment|buyjapan@m.com|Sun Kim|0Y730605XS335043T|Completed|-12|USD|-0.06|-12.06
-Feb 26 2015 19:41:24|GMT|Transfer||PayPal|65L489117V5191606|Completed|500|USD|0|500
+- Error processing
+
+- Troubles with identifying TYPE field, especially for automatic currency conversion (I need real examples that I can't get)
+
+- Processing currency conversion that was make by hands (not by accepting the payment). Add new transactions to test this.
+
+- Launch app online
+
+- Make user interface for authentication using ssl
