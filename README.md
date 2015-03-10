@@ -6,7 +6,7 @@ Latest version has server.js and soon you will be able to access the app online.
 
 #### Output example
 
-Take a look at output file output.csv. Github opens it in readable form. Here is an example of output file:
+Take a look at output file output.csv. Github opens it in readable form. The first transactions is typycal one when you create an account in Paypal sandbox. Here is an example of output file:
 
 ```
 TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT,NETUSD
