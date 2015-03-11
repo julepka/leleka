@@ -12,7 +12,11 @@ function getTransactions(req, res) {
         //TODO: process req.params.field1
         res.sendFile(__dirname + '/output.csv');
     }
-    main.makeCSV(callback());
+    console.log(req.query);
+    //TODO: make conversion to and from GMT
+    //new Date(new Date(s).getTime() + new Date().getTimezoneOffset() * 60000).toJSON()
+    main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature},
+        {StartDate: req.query.date.concat(':00.000Z')}, callback());
 }
 
 function renderPage(req, res) {

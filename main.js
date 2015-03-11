@@ -6,27 +6,30 @@
 
 var PayPal = require('paypal-classic-api');
 var csv = require('fast-csv');
-//var input = require('./input'); // DELETE THIS LINE
+var fs = require('fs');
 
-// ENTER YOUR ACCOUNT CREDENTIALS
-var credentials = {
-    username: 'abcdefg_api1.mail.com',
-    password: 'QHZE9GW6LZ2GTQWQ',
-    signature: 'AQU0e5vuZCvSg-XJploSa.sGUDlpAkarGzBHs8tpshLhz1LRC8z.qaGH'
-};
+// CREDENTIALS EXAMPLE
+//var credentials = {
+//    username: 'address_api1.mail.com',
+//    password: 'QHZE9GW6LZ2GTQWQ',
+//    signature: 'AQU0e5vuZCvSg-XJploSa.sGUDlpAkarGzBHs8tpshLhz1LRC8z.qaGH'
+//};
 
-var paypal = new PayPal(credentials);
 
-function makeCSV(callback) {
+function makeCSV(credentials, date, callback) {
+    var paypal = new PayPal(credentials);
 // CHANGE STARTDATE, EXAMPLE: '2015-03-05T02:27:44.681Z'
-    paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
+    //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
+    paypal.call('TransactionSearch', date, function (error, transactions) {
+        //TODO: check credentials info to be valid
+        //console.log(transactions.objects);
         processTransactions(error,transactions.objects,callback);
     });
 }
 exports.makeCSV = makeCSV;
 
 function processTransactions(error, transactions, callback) {
-    console.log(transactions);
+    //console.log(transactions);
     if (error) {
         console.error('Error in calling paypal-classic-api. API call error: ' + error);
     } else if (transactions === undefined) {
@@ -89,6 +92,7 @@ function isOtherCurrency(trans) {
 
 function isConvertOut(trans) {
     if (trans.EMAIL === undefined &
+        //TODO: add processing of currency conversions that were made by hands
         //trans.TYPE.substring(0, 9) === "Transfer " &
         trans.TYPE === 'Currency Conversion (debit)' &
         trans.NAME === "To U.S. Dollar" &
@@ -130,7 +134,6 @@ function convert(data, callback) {
     csv.writeToString(table, {
         headers: true
     }, function (err, data) {
-        var fs = require('fs');
         fs.writeFileSync('output.csv', data);
         return console.log(data);
         callback();
