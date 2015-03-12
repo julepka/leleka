@@ -1,0 +1,27 @@
+{
+  "name": "leleka",
+  "version": "1.0.0",
+  "description": "In main.js change API credentials and StartDate according to your PayPal account information.",
+  "main": "main.js",
+  "dependencies": {
+    "express": "^4.12.2",
+    "fast-csv": "^0.5.7",
+    "paypal-classic-api": "^1.2.1",
+    "http": "^0.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/julepka/leleka.git"
+  },
+  "author": "",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/julepka/leleka/issues"
+  },
+  "homepage": "https://github.com/julepka/leleka"
+}
