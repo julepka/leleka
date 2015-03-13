@@ -18,11 +18,8 @@ var fs = require('fs');
 
 function makeCSV(credentials, date, callback) {
     var paypal = new PayPal(credentials);
-// CHANGE STARTDATE, EXAMPLE: '2015-03-05T02:27:44.681Z'
     //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
     paypal.call('TransactionSearch', date, function (error, transactions) {
-        //TODO: check credentials info to be valid
-        //console.log(transactions.objects);
         processTransactions(error,transactions.objects,callback);
     });
 }
@@ -54,7 +51,7 @@ function clean (transaction) {
 
         } else if (isConvertOut(transaction[i])) {
             //TODO: if flag==empty || flag[n]!='flag' -> error
-            //TODO: check if timerange has initial transaction for this convertation
+            //TODO: check if timerange has initial transaction for this conversion
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[i].AMT === -transaction[flag[j]].NETAMT &
                     transaction[i].CURRENCYCODE === transaction[flag[j]].CURRENCYCODE &
@@ -65,13 +62,19 @@ function clean (transaction) {
 
         } else if (isConvertIn(transaction[i])) {
             //TODO: if flag==empty || flag[n]!='flag2' -> error
-            //TODO: check if timerange has initial transaction and charging one for this convertation
+            //TODO: check if timerange has initial transaction and charging one for this conversion
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[flag[j]].NETUSD === "flag2") {
                     transaction[flag[j]].NETUSD = transaction[i].NETAMT;
-                    flag.splice(j ,1);
+                    flag.splice(j, 1);
                 }
             }
+
+        } else if (isConvertOutNotAuto()) {
+            //TODO: Currency conversion was requested by hands
+            //It means that the amount can very unexpectedly
+
+        } else if (isConvertOutNotAuto()) {
 
         } else {
             transaction[i].NETUSD = transaction[i].NETAMT;
@@ -106,6 +109,26 @@ function isConvertIn(trans) {
     if (trans.EMAIL === undefined &
         //trans.TYPE.substring(0, 9) === "Transfer " &
         trans.TYPE === 'Currency Conversion (credit)' &
+        trans.NAME.substring(0, 5) === "From " &
+        trans.AMT > 0 & trans.NETAMT > 0 &
+        trans.CURRENCYCODE === "USD") {
+        return true;
+    } else return false;
+}
+
+function isConvertOutNotAuto(trans) {
+    if (trans.EMAIL === undefined &
+        trans.TYPE.substring(0, 9) === "Transfer " &
+        trans.NAME === "To U.S. Dollar" &
+        trans.AMT < 0 & trans.NETAMT < 0 &
+        trans.CURRENCYCODE !== "USD") {
+        return true;
+    } else return false;
+}
+
+function isConvertInNotAuto(trans) {
+    if (trans.EMAIL === undefined &
+        trans.TYPE.substring(0, 9) === "Transfer " &
         trans.NAME.substring(0, 5) === "From " &
         trans.AMT > 0 & trans.NETAMT > 0 &
         trans.CURRENCYCODE === "USD") {
