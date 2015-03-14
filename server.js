@@ -8,16 +8,18 @@ var express = require('express');
 var main = require('./main.js');
 var fs = require('fs');
 var https = require('https');
+var http = require('http');
 
-var privateKey =  fs.readFileSync(__dirname + '/ssl/server.key').toString();
-var certificate = fs.readFileSync(__dirname + '/ssl/server.crt').toString();
+//var privateKey =  fs.readFileSync(__dirname + '/ssl/server.key').toString();
+//var certificate = fs.readFileSync(__dirname + '/ssl/server.crt').toString();
 
 var app = express();
 
 app.get('/', renderPage);
 app.get('/getTransactions', getTransactions);
 
-var server = https.createServer({key: privateKey, cert: certificate}, app);
+//var server = https.createServer({key: privateKey, cert: certificate}, app);
+var server = http.createServer(app);
 server.listen(process.env.PORT || 5000);
 
 function renderPage(req, res) {
