@@ -18,7 +18,7 @@ app.get('/', renderPage);
 app.get('/getTransactions', getTransactions);
 
 var server = https.createServer({key: privateKey, cert: certificate}, app);
-server.listen(8080);
+server.listen(process.env.PORT || 5000);
 
 function renderPage(req, res) {
     fs.readFile('./index.html', function (err, html) {
