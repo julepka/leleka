@@ -10,7 +10,7 @@ var fs = require('fs');
 
 // CREDENTIALS EXAMPLE
 //var credentials = {
-//    username: 'charity_api1.mail.com',
+//    username: 'address_api1.mail.com',
 //    password: 'QHZE9GW6LZ2GTQWQ',
 //    signature: 'AQU0e5vuZCvSg-XJploSa.sGUDlpAkarGzBHs8tpshLhz1LRC8z.qaGH'
 //};
@@ -20,6 +20,7 @@ function makeCSV(credentials, date, callback) {
     var paypal = new PayPal(credentials);
     //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
     paypal.call('TransactionSearch', date, function (error, transactions) {
+        console.log(transactions);
         processTransactions(error,transactions.objects,callback);
     });
 }
