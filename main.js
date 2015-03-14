@@ -10,7 +10,7 @@ var fs = require('fs');
 
 // CREDENTIALS EXAMPLE
 //var credentials = {
-//    username: 'address_api1.mail.com',
+//    username: 'charity_api1.mail.com',
 //    password: 'QHZE9GW6LZ2GTQWQ',
 //    signature: 'AQU0e5vuZCvSg-XJploSa.sGUDlpAkarGzBHs8tpshLhz1LRC8z.qaGH'
 //};

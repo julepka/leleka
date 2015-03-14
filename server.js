@@ -1,3 +1,9 @@
+/*
+* Copyright (c) 2015 Iuliia Potapenko
+* Distributed under the GNU GPL v3.
+* For full terms see http://www.gnu.org/licenses/gpl or LICENSE.txt file.
+*/
+
 var express = require('express');
 var main = require('./main.js');
 var fs = require('fs');
