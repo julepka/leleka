@@ -39,7 +39,7 @@ function getTransactions(req, res) {
     //TODO: make conversion to and from GMT if needed
     //new Date(new Date(s).getTime() + new Date().getTimezoneOffset() * 60000).toJSON()
     if (checkCredentialsReq(req.query)) {
-        main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature},
+        main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature, live: true},
             {StartDate: req.query.date.concat(':00.000Z')}, callback());
     }
 }

@@ -17,6 +17,7 @@ var fs = require('fs');
 
 
 function makeCSV(credentials, date, callback) {
+
     var paypal = new PayPal(credentials);
     //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
     paypal.call('TransactionSearch', date, function (error, transactions) {
@@ -71,11 +72,11 @@ function clean (transaction) {
                 }
             }
 
-        } else if (isConvertOutNotAuto()) {
-            //TODO: Currency conversion was requested by hands
-            //It means that the amount can very unexpectedly
-
-        } else if (isConvertOutNotAuto()) {
+        //} else if (isConvertOutNotAuto()) {
+        //    //TODO: Currency conversion was requested by hands
+        //    //It means that the amount can very unexpectedly
+        //
+        //} else if (isConvertOutNotAuto()) {
 
         } else {
             transaction[i].NETUSD = transaction[i].NETAMT;
@@ -117,25 +118,25 @@ function isConvertIn(trans) {
     } else return false;
 }
 
-function isConvertOutNotAuto(trans) {
-    if (trans.EMAIL === undefined &
-        trans.TYPE.substring(0, 9) === "Transfer " &
-        trans.NAME === "To U.S. Dollar" &
-        trans.AMT < 0 & trans.NETAMT < 0 &
-        trans.CURRENCYCODE !== "USD") {
-        return true;
-    } else return false;
-}
-
-function isConvertInNotAuto(trans) {
-    if (trans.EMAIL === undefined &
-        trans.TYPE.substring(0, 9) === "Transfer " &
-        trans.NAME.substring(0, 5) === "From " &
-        trans.AMT > 0 & trans.NETAMT > 0 &
-        trans.CURRENCYCODE === "USD") {
-        return true;
-    } else return false;
-}
+//function isConvertOutNotAuto(trans) {
+//    if (trans.EMAIL === undefined &
+//        trans.TYPE.substring(0, 9) === "Transfer " &
+//        trans.NAME === "To U.S. Dollar" &
+//        trans.AMT < 0 & trans.NETAMT < 0 &
+//        trans.CURRENCYCODE !== "USD") {
+//        return true;
+//    } else return false;
+//}
+//
+//function isConvertInNotAuto(trans) {
+//    if (trans.EMAIL === undefined &
+//        trans.TYPE.substring(0, 9) === "Transfer " &
+//        trans.NAME.substring(0, 5) === "From " &
+//        trans.AMT > 0 & trans.NETAMT > 0 &
+//        trans.CURRENCYCODE === "USD") {
+//        return true;
+//    } else return false;
+//}
 
 function convert(data, callback) {
     //TODO: check if data is not empty
