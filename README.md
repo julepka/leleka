@@ -1,8 +1,6 @@
 ### Leleka
 
-In main.js change API credentials and StartDate according to your PayPal account information.
-
-Latest version has server.js and soon you will be able to access the app online.
+Application is launched online on heroku. Can not publish a link because of security issues. Link will be provided later.
 
 #### Output example
 
@@ -39,12 +37,6 @@ Mon Mar 09 2015 19:56:35 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Per
 
 ##### TODOs
 
-- Error processing.
+- Error processing
 
-- Troubles with identifying TYPE field, especially for automatic currency conversion. I need an example of real data to make it work correctly.
-
-- Processing currency conversion that was made by hands (not by accepting the payment, but by requesting to convert currency you already have). Add new transactions to test this.
-
-- Launch app online
-
-- Make user interface for authentication using ssl
+- Processing of currency conversions that were made by user and not automatically
