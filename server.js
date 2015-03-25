@@ -45,6 +45,9 @@ function getTransactions(req, res) {
     if (checkCredentialsReq(req.query)) {
         main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature, live: true},
             {StartDate: req.query.date.concat(':00.000Z')}, callback);
+    } else {
+        res.write("Error in input fields. Go back and try again.");
+        res.end();
     }
 }
 
