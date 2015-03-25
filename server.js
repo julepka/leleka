@@ -16,7 +16,7 @@ var http = require('http');
 var app = express();
 
 app.get('/', renderPage);
-app.get('/getTransactions', getTransactions);
+app.get('/transactions', getTransactions);
 
 //var server = https.createServer({key: privateKey, cert: certificate}, app);
 var server = http.createServer(app);
@@ -32,15 +32,19 @@ function renderPage(req, res) {
 }
 
 function getTransactions(req, res) {
-    function callback() {
-        res.sendFile(__dirname + '/output.csv');
+    function callback(data) {
+        res.status(200);
+        res.header('content-type', 'text/csv');
+        res.write(data);
+        res.end();
+        //res.sendFile(__dirname + '/output.csv');
     }
     console.log(req.query);
     //TODO: make conversion to and from GMT if needed
     //new Date(new Date(s).getTime() + new Date().getTimezoneOffset() * 60000).toJSON()
     if (checkCredentialsReq(req.query)) {
         main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature, live: true},
-            {StartDate: req.query.date.concat(':00.000Z')}, callback());
+            {StartDate: req.query.date.concat(':00.000Z')}, callback);
     }
 }
 

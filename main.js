@@ -159,9 +159,10 @@ function convert(data, callback) {
     csv.writeToString(table, {
         headers: true
     }, function (err, data) {
-        fs.writeFileSync('output.csv', data);
-        return console.log(data);
-        callback();
+        callback(data);
+        //fs.writeFileSync('output.csv', data);
+        //return console.log(data);
+        //callback();
     });
 }
 
