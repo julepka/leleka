@@ -7,6 +7,7 @@
 var PayPal = require('paypal-classic-api');
 var csv = require('fast-csv');
 var fs = require('fs');
+var tr = [];
 
 // CREDENTIALS EXAMPLE
 //var credentials = {
@@ -20,11 +21,53 @@ function makeCSV(credentials, date, callback) {
 
     var paypal = new PayPal(credentials);
     //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
-    paypal.call('TransactionSearch', date, function (error, transactions) {
-        console.log(transactions);
-        processTransactions(error,transactions.objects,callback);
+    //date.EndDate = '2015-03-20T02:27:44.681Z';
+    paypal.call('TransactionSearch', date, function (error, transactions){
+        //console.log(transactions);
+        createTransactions(paypal, date.StartDate, date.EndDate, function() {
+            processTransactions(error, tr, callback);
+        });
+
+    });
+
+}
+
+function createTransactions(paypal, startRaw, endRaw, callback) {
+    var start = new Date(startRaw);
+    var end = new Date(endRaw);
+    var d = {StartDate: start.toJSON(), EndDate: end.toJSON()};
+    console.log('enter create: start ' + startRaw + ' end ' + endRaw);
+    paypal.call('TransactionSearch', d, function (error, transactions) {
+        console.log('entered call');
+        if (transactions.objects.length >= 100) {
+            console.log('before recursion');
+            var tasksFinished = 0;
+            function subCallback() {
+                tasksFinished += 1;
+                if (tasksFinished == 2) {
+                    callback();
+                }
+            }
+            createTransactions(paypal, start, new Date((start.getTime() + end.getTime()) / 2), subCallback);
+            createTransactions(paypal, new Date((start.getTime() + end.getTime()) / 2), end, subCallback);
+        } else {
+            console.log('enter create: start ' + startRaw + ' end ' + endRaw);
+            paypal.call('TransactionSearch', d, function (error, transactions) {
+                console.log('before push');
+
+                for(var i=0; i<transactions.objects.length; i++) {
+                    tr.push(transactions.objects[i]);
+                }
+                console.log(tr);
+                callback();
+            });
+        }
     });
 }
+
+
+
+
 exports.makeCSV = makeCSV;
 
 function processTransactions(error, transactions, callback) {
