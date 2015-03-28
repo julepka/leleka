@@ -24,15 +24,16 @@ function makeCSV(credentials, date, callback) {
     //date.EndDate = '2015-03-20T02:27:44.681Z';
     paypal.call('TransactionSearch', date, function (error, transactions){
         //console.log(transactions);
-        createTransactions(paypal, date.StartDate, date.EndDate, function() {
-            processTransactions(error, tr, callback);
+        createTransactions(paypal, date.StartDate, date.EndDate, function(result) {
+            tr = result;
+            processTransactions(error, result, callback);
         });
 
     });
 
 }
 
-function createTransactions(paypal, startRaw, endRaw, callback) {
+function createTransactions(paypal, startRaw, endRaw, callback, recursionNumber) {
     var start = new Date(startRaw);
     var end = new Date(endRaw);
     var d = {StartDate: start.toJSON(), EndDate: end.toJSON()};
@@ -42,24 +43,39 @@ function createTransactions(paypal, startRaw, endRaw, callback) {
         if (transactions.objects.length >= 100) {
             //console.log('before recursion');
             var tasksFinished = 0;
-            function subCallback() {
+            var result = [];
+            function subCallback(subTransactions, recursionNumber) {
+
+                console.log(subTransactions);
+                if (recursionNumber == 0) {
+                    result = result.concat(subTransactions);
+                }
+                else {
+                    console.log("sub transactions:", subTransactions);
+                    result = subTransactions.concat(result);
+                }
+
                 tasksFinished += 1;
                 if (tasksFinished == 2) {
-                    callback();
+                    callback(result);
                 }
             }
-            createTransactions(paypal, start, new Date((start.getTime() + end.getTime()) / 2), subCallback);
-            createTransactions(paypal, new Date((start.getTime() + end.getTime()) / 2), end, subCallback);
+            createTransactions(paypal, start, new Date((start.getTime() + end.getTime()) / 2), subCallback, 0);
+            createTransactions(paypal, new Date((start.getTime() + end.getTime()) / 2), end, subCallback, 1);
         } else {
             //console.log('enter create: start ' + startRaw + ' end ' + endRaw);
             paypal.call('TransactionSearch', d, function (error, transactions) {
                 //console.log('before push');
 
+                /*
                 for(var i=0; i<transactions.objects.length; i++) {
                     tr.push(transactions.objects[i]);
                 }
+                */
+
                 //console.log(tr);
-                callback();
+
+                callback(transactions.objects, recursionNumber);
             });
         }
     });
@@ -136,8 +152,8 @@ function clean (transaction) {
             console.log('isBuyOperation');
             console.log(buyflag);
             for (var j = 0; j < buyflag.length; j++) {
-                console.log(transaction[buyflag[j]]);
-                console.log(transaction[i]);
+                //console.log(transaction[buyflag[j]]);
+                //console.log(transaction[i]);
                 if (transaction[buyflag[j]].EMAIL === "buyflag2" &
                     transaction[buyflag[j]].NAME === -transaction[i].AMT) {
                     transaction[buyflag[j]].EMAIL = transaction[i].EMAIL;
