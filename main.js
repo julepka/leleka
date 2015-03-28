@@ -36,11 +36,11 @@ function createTransactions(paypal, startRaw, endRaw, callback) {
     var start = new Date(startRaw);
     var end = new Date(endRaw);
     var d = {StartDate: start.toJSON(), EndDate: end.toJSON()};
-    console.log('enter create: start ' + startRaw + ' end ' + endRaw);
+   // console.log('enter create: start ' + startRaw + ' end ' + endRaw);
     paypal.call('TransactionSearch', d, function (error, transactions) {
-        console.log('entered call');
+        //console.log('entered call');
         if (transactions.objects.length >= 100) {
-            console.log('before recursion');
+            //console.log('before recursion');
             var tasksFinished = 0;
             function subCallback() {
                 tasksFinished += 1;
@@ -51,14 +51,14 @@ function createTransactions(paypal, startRaw, endRaw, callback) {
             createTransactions(paypal, start, new Date((start.getTime() + end.getTime()) / 2), subCallback);
             createTransactions(paypal, new Date((start.getTime() + end.getTime()) / 2), end, subCallback);
         } else {
-            console.log('enter create: start ' + startRaw + ' end ' + endRaw);
+            //console.log('enter create: start ' + startRaw + ' end ' + endRaw);
             paypal.call('TransactionSearch', d, function (error, transactions) {
-                console.log('before push');
+                //console.log('before push');
 
                 for(var i=0; i<transactions.objects.length; i++) {
                     tr.push(transactions.objects[i]);
                 }
-                console.log(tr);
+                //console.log(tr);
                 callback();
             });
         }
@@ -86,6 +86,7 @@ function processTransactions(error, transactions, callback) {
 function clean (transaction) {
     var result = [];
     var flag = [];
+    var buyflag = [];
 
     for (var i = transaction.length - 1; i >= 0; i--) {
 
@@ -102,6 +103,7 @@ function clean (transaction) {
                     transaction[i].CURRENCYCODE === transaction[flag[j]].CURRENCYCODE &
                     transaction[flag[j]].NETUSD === "flag") {
                     transaction[flag[j]].NETUSD = "flag2";
+                    break;
                 }
             }
 
@@ -112,8 +114,42 @@ function clean (transaction) {
                 if (transaction[flag[j]].NETUSD === "flag2") {
                     transaction[flag[j]].NETUSD = transaction[i].NETAMT;
                     flag.splice(j, 1);
+                    break;
                 }
             }
+
+        } else if (isBuyCurrencyOut(transaction[i])) {
+            transaction[i].EMAIL = 'buyflag';
+            buyflag.push(i);
+
+        } else if (isBuyCurrencyIn(transaction[i])) {
+            for (var j = 0; j < buyflag.length; j++) {
+                if (transaction[buyflag[j]].EMAIL === "buyflag") {
+                    transaction[buyflag[j]].EMAIL = "buyflag2";
+                    transaction[buyflag[j]].NAME = transaction[i].NETAMT;
+
+                    break;
+                }
+            }
+
+        } else if (isBuyOperation(transaction[i])) {
+            console.log('isBuyOperation');
+            console.log(buyflag);
+            for (var j = 0; j < buyflag.length; j++) {
+                console.log(transaction[buyflag[j]]);
+                console.log(transaction[i]);
+                if (transaction[buyflag[j]].EMAIL === "buyflag2" &
+                    transaction[buyflag[j]].NAME === -transaction[i].AMT) {
+                    transaction[buyflag[j]].EMAIL = transaction[i].EMAIL;
+                    transaction[buyflag[j]].TYPE = transaction[i].TYPE;
+                    transaction[buyflag[j]].NAME = transaction[i].NAME;
+                    flag.splice(j, 1);
+                    //console.log(transaction[buyflag[j]]);
+                    result.push(transaction[buyflag[j]]);
+                    break;
+                }
+            }
+
 
         //} else if (isConvertOutNotAuto()) {
         //    //TODO: Currency conversion was requested by hands
@@ -132,6 +168,7 @@ function clean (transaction) {
 
 function isOtherCurrency(trans) {
     if (trans.CURRENCYCODE !== "USD" &
+        trans.TYPE.substring(0, 21) !== "Currency Conversion (" &
         trans.AMT > 0 & trans.NETAMT > 0 &
         trans.NAME !== "To U.S. Dollar") {
         return true;
@@ -157,6 +194,36 @@ function isConvertIn(trans) {
         trans.NAME.substring(0, 5) === "From " &
         trans.AMT > 0 & trans.NETAMT > 0 &
         trans.CURRENCYCODE === "USD") {
+        return true;
+    } else return false;
+}
+
+function isBuyCurrencyOut(trans) {
+    if (trans.EMAIL === undefined &
+        trans.TYPE === 'Currency Conversion (debit)' &
+        trans.NAME.substring(0, 3) === "To " &
+        trans.CURRENCYCODE === "USD" &
+        trans.AMT < 0 & trans.NETAMT < 0 &
+        trans.NAME !== "To U.S. Dollar") {
+        return true;
+    } else return false;
+}
+
+function isBuyCurrencyIn(trans) {
+    if (trans.EMAIL === undefined &
+            //trans.TYPE.substring(0, 9) === "Transfer " &
+        trans.TYPE === 'Currency Conversion (credit)' &
+        trans.NAME === "From U.S. Dollar" &
+        trans.AMT > 0 & trans.NETAMT > 0 &
+        trans.CURRENCYCODE !== "USD") {
+        return true;
+    } else return false;
+}
+
+function isBuyOperation(trans) {
+    if (trans.CURRENCYCODE !== "USD" &
+    trans.TYPE.substring(0, 21) !== "Currency Conversion (" &
+    trans.AMT < 0 & trans.NETAMT < 0) {
         return true;
     } else return false;
 }
