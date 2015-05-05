@@ -8,6 +8,7 @@ var PayPal = require('paypal-classic-api');
 var csv = require('fast-csv');
 var fs = require('fs');
 var tr = [];
+var rules = require('./rules.js');
 
 // CREDENTIALS EXAMPLE
 //var credentials = {
@@ -106,12 +107,12 @@ function clean (transaction) {
 
     for (var i = transaction.length - 1; i >= 0; i--) {
 
-        if (isOtherCurrency(transaction[i])) {
+        if (rules.isOtherCurrency(transaction[i])) {
             transaction[i].NETUSD = "flag";
             flag.push(i);
             result.push(transaction[i]);
 
-        } else if (isConvertOut(transaction[i])) {
+        } else if (rules.isConvertOut(transaction[i])) {
             //TODO: if flag==empty || flag[n]!='flag' -> error
             //TODO: check if timerange has initial transaction for this conversion
             for (var j = 0; j < flag.length; j++) {
@@ -123,7 +124,7 @@ function clean (transaction) {
                 }
             }
 
-        } else if (isConvertIn(transaction[i])) {
+        } else if (rules.isConvertIn(transaction[i])) {
             //TODO: if flag==empty || flag[n]!='flag2' -> error
             //TODO: check if timerange has initial transaction and charging one for this conversion
             for (var j = 0; j < flag.length; j++) {
@@ -134,11 +135,11 @@ function clean (transaction) {
                 }
             }
 
-        } else if (isBuyCurrencyOut(transaction[i])) {
+        } else if (rules.isBuyCurrencyOut(transaction[i])) {
             transaction[i].EMAIL = 'buyflag';
             buyflag.push(i);
 
-        } else if (isBuyCurrencyIn(transaction[i])) {
+        } else if (rules.isBuyCurrencyIn(transaction[i])) {
             for (var j = 0; j < buyflag.length; j++) {
                 if (transaction[buyflag[j]].EMAIL === "buyflag") {
                     transaction[buyflag[j]].EMAIL = "buyflag2";
@@ -148,7 +149,7 @@ function clean (transaction) {
                 }
             }
 
-        } else if (isBuyOperation(transaction[i])) {
+        } else if (rules.isBuyOperation(transaction[i])) {
             console.log('isBuyOperation');
             console.log(buyflag);
             for (var j = 0; j < buyflag.length; j++) {
@@ -165,8 +166,7 @@ function clean (transaction) {
                     break;
                 }
             }
-
-
+            
         //} else if (isConvertOutNotAuto()) {
         //    //TODO: Currency conversion was requested by hands
         //    //It means that the amount can very unexpectedly
@@ -181,88 +181,6 @@ function clean (transaction) {
     //TODO: check if flag[] is empty
     return result;
 }
-
-function isOtherCurrency(trans) {
-    if (trans.CURRENCYCODE !== "USD" &
-        trans.TYPE.substring(0, 21) !== "Currency Conversion (" &
-        trans.AMT > 0 & trans.NETAMT > 0 &
-        trans.NAME !== "To U.S. Dollar") {
-        return true;
-    } else return false;
-}
-
-function isConvertOut(trans) {
-    if (trans.EMAIL === undefined &
-        //TODO: add processing of currency conversions that were made by hands
-        //trans.TYPE.substring(0, 9) === "Transfer " &
-        trans.TYPE === 'Currency Conversion (debit)' &
-        trans.NAME === "To U.S. Dollar" &
-        trans.AMT < 0 & trans.NETAMT < 0 &
-        trans.CURRENCYCODE !== "USD") {
-        return true;
-    } else return false;
-}
-
-function isConvertIn(trans) {
-    if (trans.EMAIL === undefined &
-        //trans.TYPE.substring(0, 9) === "Transfer " &
-        trans.TYPE === 'Currency Conversion (credit)' &
-        trans.NAME.substring(0, 5) === "From " &
-        trans.AMT > 0 & trans.NETAMT > 0 &
-        trans.CURRENCYCODE === "USD") {
-        return true;
-    } else return false;
-}
-
-function isBuyCurrencyOut(trans) {
-    if (trans.EMAIL === undefined &
-        trans.TYPE === 'Currency Conversion (debit)' &
-        trans.NAME.substring(0, 3) === "To " &
-        trans.CURRENCYCODE === "USD" &
-        trans.AMT < 0 & trans.NETAMT < 0 &
-        trans.NAME !== "To U.S. Dollar") {
-        return true;
-    } else return false;
-}
-
-function isBuyCurrencyIn(trans) {
-    if (trans.EMAIL === undefined &
-            //trans.TYPE.substring(0, 9) === "Transfer " &
-        trans.TYPE === 'Currency Conversion (credit)' &
-        trans.NAME === "From U.S. Dollar" &
-        trans.AMT > 0 & trans.NETAMT > 0 &
-        trans.CURRENCYCODE !== "USD") {
-        return true;
-    } else return false;
-}
-
-function isBuyOperation(trans) {
-    if (trans.CURRENCYCODE !== "USD" &
-    trans.TYPE.substring(0, 21) !== "Currency Conversion (" &
-    trans.AMT < 0 & trans.NETAMT < 0) {
-        return true;
-    } else return false;
-}
-
-//function isConvertOutNotAuto(trans) {
-//    if (trans.EMAIL === undefined &
-//        trans.TYPE.substring(0, 9) === "Transfer " &
-//        trans.NAME === "To U.S. Dollar" &
-//        trans.AMT < 0 & trans.NETAMT < 0 &
-//        trans.CURRENCYCODE !== "USD") {
-//        return true;
-//    } else return false;
-//}
-//
-//function isConvertInNotAuto(trans) {
-//    if (trans.EMAIL === undefined &
-//        trans.TYPE.substring(0, 9) === "Transfer " &
-//        trans.NAME.substring(0, 5) === "From " &
-//        trans.AMT > 0 & trans.NETAMT > 0 &
-//        trans.CURRENCYCODE === "USD") {
-//        return true;
-//    } else return false;
-//}
 
 function convert(data, callback) {
     //TODO: check if data is not empty
