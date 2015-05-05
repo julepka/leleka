@@ -1,0 +1,37 @@
+body {
+  font-family: Arial, Sans-serif;
+  background: #F0FAFF;
+}
+
+h4 {
+	font-size: 16px;
+	color: #0099FF;
+}
+
+#loginform  {
+	background: #FFFFFF;
+    border: 3px solid #00CCFF;
+    border-radius: 15px 15px 15px 15px;
+    display: inline-block;
+    margin-left: 50px;
+    margin-top: 10px;
+    padding: 25px 50px 10px;
+    width: 400px;
+}
+
+#button {
+	background-color:#00CCFF;
+	border-radius:15px;
+	border-color: #00CCFF;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:16px;
+	padding:5px 30px;
+}
+
+.error {
+color:red;
+font-size: 11px;
+display: block;
+}
