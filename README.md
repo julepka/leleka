@@ -7,7 +7,7 @@ Application is launched online on heroku. Can not publish a link because of secu
 Take a look at output file output.csv. Github opens it in readable form. The first transactions is typycal one when you create an account in Paypal sandbox. Here is an example of output file:
 
 ```
-TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT,NETUSD
+TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT,NETMAIN
 Mon Mar 09 2015 19:04:00 GMT-0700 (PDT),GMT,Transfer,,PayPal,9YW45438SY271923M,Completed,1000,USD,0,1000,1000
 Mon Mar 09 2015 19:25:21 GMT-0700 (PDT),GMT,Payment,buyer-australia@mail.com,Jim Smith,1H133144P76734012,Completed,200,AUD,-8.1,191.9,172.78
 Mon Mar 09 2015 19:29:11 GMT-0700 (PDT),GMT,Payment,buyer-usa-1@mail.com,Bill Forest,73X14788UW6300353,Completed,100,USD,-3.2,96.8,96.8
@@ -34,9 +34,3 @@ Mon Mar 09 2015 19:55:15 GMT-0700 (PDT),GMT,Payment,buyer-australia@mail.com,Jim
 Mon Mar 09 2015 19:55:59 GMT-0700 (PDT),GMT,Payment,buyer-usa-2@mail.com,Donna Nelton,7KF59618TR0061705,Completed,225,USD,0,225,225
 Mon Mar 09 2015 19:56:35 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Person,5K319446S05858224,Completed,130,USD,0,130,130
 ```
-
-##### TODOs
-
-- Error processing
-
-- Processing of currency conversions that were made by user and not automatically
