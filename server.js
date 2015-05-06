@@ -49,10 +49,12 @@ function getTransactions(req, res) {
     if (checkCredentialsReq(req.query)) {
         if(req.query.sandbox == "on") {
             main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature},
-                {StartDate: req.query.date.concat(':00.000Z'), EndDate: req.query.date2.concat(':00.000Z') }, callback);
+                {StartDate: req.query.date.concat(':00.000Z'), EndDate: req.query.date2.concat(':00.000Z') }, 
+                callback, {cur: req.query.currency, abr: req.query.currency2});
         } else {
             main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature, live: true},
-                {StartDate: req.query.date.concat(':00.000Z'), EndDate: req.query.date2.concat(':00.000Z') }, callback);
+                {StartDate: req.query.date.concat(':00.000Z'), EndDate: req.query.date2.concat(':00.000Z') }, 
+                callback, {cur: req.query.currency, abr: req.query.currency2});
         }
     } else {
         res.write("Error in input fields. Go back and try again.");

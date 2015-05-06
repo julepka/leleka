@@ -18,7 +18,7 @@ var rules = require('./rules.js');
 //};
 
 
-function makeCSV(credentials, date, callback) {
+function makeCSV(credentials, date, callback, currency) {
 
     var paypal = new PayPal(credentials);
     //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
@@ -27,7 +27,11 @@ function makeCSV(credentials, date, callback) {
         //console.log(transactions);
         createTransactions(paypal, date.StartDate, date.EndDate, function(result) {
             tr = result;
-            processTransactions(error, result, callback);
+            if((currency.cur == '' || currency.cur == 'undefined') & (currency.abr == '' || currency.abr == 'undefined')) {
+                convert(result, callback);
+            } else {
+                processTransactions(error, result, currency, callback);
+            }
         });
 
     });
@@ -87,7 +91,7 @@ function createTransactions(paypal, startRaw, endRaw, callback, recursionNumber)
 
 exports.makeCSV = makeCSV;
 
-function processTransactions(error, transactions, callback) {
+function processTransactions(error, transactions, currency, callback) {
     //console.log(transactions);
     if (error) {
         console.error('Error in calling paypal-classic-api. API call error: ' + error);
@@ -96,50 +100,50 @@ function processTransactions(error, transactions, callback) {
     } else if (transactions.length === 0) {
         console.log('Transactions list is empty');
     } else {
-        convert(clean(transactions), callback);
+        convert(clean(transactions, currency), callback);
     }
 };
 
-function clean (transaction) {
+function clean (transaction, currency) {
     var result = [];
     var flag = [];
     var buyflag = [];
 
     for (var i = transaction.length - 1; i >= 0; i--) {
 
-        if (rules.isOtherCurrency(transaction[i])) {
-            transaction[i].NETUSD = "flag";
+        if (rules.isOtherCurrency(transaction[i], currency)) {
+            transaction[i].NETMAIN = "flag";
             flag.push(i);
             result.push(transaction[i]);
 
-        } else if (rules.isConvertOut(transaction[i])) {
+        } else if (rules.isConvertOut(transaction[i], currency)) {
             //TODO: if flag==empty || flag[n]!='flag' -> error
             //TODO: check if timerange has initial transaction for this conversion
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[i].AMT === -transaction[flag[j]].NETAMT &
                     transaction[i].CURRENCYCODE === transaction[flag[j]].CURRENCYCODE &
-                    transaction[flag[j]].NETUSD === "flag") {
-                    transaction[flag[j]].NETUSD = "flag2";
+                    transaction[flag[j]].NETMAIN === "flag") {
+                    transaction[flag[j]].NETMAIN = "flag2";
                     break;
                 }
             }
 
-        } else if (rules.isConvertIn(transaction[i])) {
+        } else if (rules.isConvertIn(transaction[i], currency)) {
             //TODO: if flag==empty || flag[n]!='flag2' -> error
             //TODO: check if timerange has initial transaction and charging one for this conversion
             for (var j = 0; j < flag.length; j++) {
-                if (transaction[flag[j]].NETUSD === "flag2") {
-                    transaction[flag[j]].NETUSD = transaction[i].NETAMT;
+                if (transaction[flag[j]].NETMAIN === "flag2") {
+                    transaction[flag[j]].NETMAIN = transaction[i].NETAMT;
                     flag.splice(j, 1);
                     break;
                 }
             }
 
-        } else if (rules.isBuyCurrencyOut(transaction[i])) {
+        } else if (rules.isBuyCurrencyOut(transaction[i], currency)) {
             transaction[i].EMAIL = 'buyflag';
             buyflag.push(i);
 
-        } else if (rules.isBuyCurrencyIn(transaction[i])) {
+        } else if (rules.isBuyCurrencyIn(transaction[i], currency)) {
             for (var j = 0; j < buyflag.length; j++) {
                 if (transaction[buyflag[j]].EMAIL === "buyflag") {
                     transaction[buyflag[j]].EMAIL = "buyflag2";
@@ -149,7 +153,7 @@ function clean (transaction) {
                 }
             }
 
-        } else if (rules.isBuyOperation(transaction[i])) {
+        } else if (rules.isBuyOperation(transaction[i], currency)) {
             console.log('isBuyOperation');
             console.log(buyflag);
             for (var j = 0; j < buyflag.length; j++) {
@@ -174,7 +178,7 @@ function clean (transaction) {
         //} else if (isConvertOutNotAuto()) {
 
         } else {
-            transaction[i].NETUSD = transaction[i].NETAMT;
+            transaction[i].NETMAIN = transaction[i].NETAMT;
             result.push(transaction[i]);
         }
     }
