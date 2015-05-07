@@ -1,0 +1,15 @@
+TIMESTAMP,TIMEZONE,TYPE,EMAIL,NAME,TRANSACTIONID,STATUS,AMT,CURRENCYCODE,FEEAMT,NETAMT,NETMAIN
+Mon Mar 09 2015 19:30:55 GMT-0700 (PDT),GMT,Payment,buyer-turkey@mail.com,Zaur Aliev,5D667625DJ142730X,Completed,100,USD,-4.2,95.8,95.8
+Mon Mar 09 2015 19:32:21 GMT-0700 (PDT),GMT,Payment,buyer-usa-2@mail.com,Donna Nelton,3XP0992236919601T,Completed,200,USD,0,200,200
+Mon Mar 09 2015 19:34:27 GMT-0700 (PDT),GMT,Payment,buyer-mexico@mail.com,Oscar Mendoza,8YU99125TN2711312,Completed,800,MXN,-35.2,764.8,57.06
+Mon Mar 09 2015 19:35:34 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Person,81535355733575420,Completed,300,USD,-9,291,291
+Mon Mar 09 2015 19:37:45 GMT-0700 (PDT),GMT,Payment,buyer-austria@mail.com,Thomas Mall,46P885982X544652G,Completed,100,EUR,0,100,129.36
+Mon Mar 09 2015 19:38:38 GMT-0700 (PDT),GMT,Payment,buyer-brazil@mail.com,Pera Tarra,2XJ92299UJ3426725,Completed,300,BRL,-12.1,287.9,122.74
+Mon Mar 09 2015 19:40:00 GMT-0700 (PDT),GMT,Payment,buyer-malaysia@mail.com,Idea Mako,1AR663506K054802C,Completed,70,USD,-3.03,66.97,66.97
+Mon Mar 09 2015 19:41:13 GMT-0700 (PDT),GMT,Payment,buyer-russia@mail.com,Makarova Anna,9T1150232C883021U,Completed,200,RUB,-17.8,182.2,5.46
+Mon Mar 09 2015 19:42:00 GMT-0700 (PDT),GMT,Payment,buyer-usa-1@mail.com,Bill Forest,8M9456729W876990H,Completed,110,USD,0,110,110
+Mon Mar 09 2015 19:42:38 GMT-0700 (PDT),GMT,Payment,buyer-usa-2@mail.com,Donna Nelton,3RP250868W624473L,Completed,210,USD,-6.39,203.61,203.61
+Mon Mar 09 2015 19:44:24 GMT-0700 (PDT),GMT,Payment,buyer-canada@mail.com,Emma Kholt,13T44442AS599440D,Completed,400,CAD,-15.9,384.1,361.84
+Mon Mar 09 2015 19:45:16 GMT-0700 (PDT),GMT,Payment,buyer-japan@mail.com,Izumi Tamako,5P351626EW861452N,Completed,100,JPY,-44,56,0.54
+Mon Mar 09 2015 19:47:21 GMT-0700 (PDT),GMT,Payment,buyer-israel@mail.com,Makh Asu,69P206210K0014213,Completed,900,ILS,-36.3,863.7,235.43
+Mon Mar 09 2015 19:48:09 GMT-0700 (PDT),GMT,Payment,buyer-usa-3@mail.com,Tim Person,4YP5038868719023S,Completed,310,USD,0,310,310
