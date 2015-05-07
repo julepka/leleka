@@ -13,16 +13,17 @@ var rules = require('./rules.js');
 function makeCSV(credentials, date, callback, currency) {
 
     var paypal = new PayPal(credentials);
-    //paypal.call('TransactionSearch', {StartDate: '2015-03-05T02:27:44.681Z'}, function (error, transactions) {
-    //date.EndDate = '2015-03-20T02:27:44.681Z';
     paypal.call('TransactionSearch', date, function (error, transactions){
-        //console.log(transactions);
         createTransactions(paypal, date.StartDate, date.EndDate, function(result) {
             tr = result;
-            if((currency.cur == '' || currency.cur == 'undefined') & (currency.abr == '' || currency.abr == 'undefined')) {
-                convert(result, callback);
+            if (result[0].ERRORCODE == '10002') {
+                convert([], callback);
             } else {
-                processTransactions(error, result, currency, callback);
+                if((currency.cur == '' || currency.cur == 'undefined') & (currency.abr == '' || currency.abr == 'undefined')) {
+                    convert(result, callback);
+                } else {
+                    processTransactions(error, result, currency, callback);
+                }
             }
         });
 
@@ -34,11 +35,8 @@ function createTransactions(paypal, startRaw, endRaw, callback, recursionNumber)
     var start = new Date(startRaw);
     var end = new Date(endRaw);
     var d = {StartDate: start.toJSON(), EndDate: end.toJSON()};
-   // console.log('enter create: start ' + startRaw + ' end ' + endRaw);
     paypal.call('TransactionSearch', d, function (error, transactions) {
-        //console.log('entered call');
         if (transactions.objects.length >= 100) {
-            //console.log('before recursion');
             var tasksFinished = 0;
             var result = [];
             function subCallback(subTransactions, recursionNumber) {
@@ -60,18 +58,7 @@ function createTransactions(paypal, startRaw, endRaw, callback, recursionNumber)
             createTransactions(paypal, start, new Date((start.getTime() + end.getTime()) / 2), subCallback, 0);
             createTransactions(paypal, new Date((start.getTime() + end.getTime()) / 2), end, subCallback, 1);
         } else {
-            //console.log('enter create: start ' + startRaw + ' end ' + endRaw);
             paypal.call('TransactionSearch', d, function (error, transactions) {
-                //console.log('before push');
-
-                /*
-                for(var i=0; i<transactions.objects.length; i++) {
-                    tr.push(transactions.objects[i]);
-                }
-                */
-
-                //console.log(tr);
-
                 callback(transactions.objects, recursionNumber);
             });
         }
@@ -84,7 +71,6 @@ function createTransactions(paypal, startRaw, endRaw, callback, recursionNumber)
 exports.makeCSV = makeCSV;
 
 function processTransactions(error, transactions, currency, callback) {
-    //console.log(transactions);
     if (error) {
         console.error('Error in calling paypal-classic-api. API call error: ' + error);
     } else if (transactions === undefined) {
@@ -110,8 +96,6 @@ function clean (transaction, currency) {
             result.push(transaction[i]);
 
         } else if (rules.isConvertOut(transaction[i], currency)) {
-            //TODO: if flag==empty || flag[n]!='flag' -> error
-            //TODO: check if timerange has initial transaction for this conversion
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[i].AMT === -transaction[flag[j]].NETAMT &
                     transaction[i].CURRENCYCODE === transaction[flag[j]].CURRENCYCODE &
@@ -122,8 +106,6 @@ function clean (transaction, currency) {
             }
 
         } else if (rules.isConvertIn(transaction[i], currency)) {
-            //TODO: if flag==empty || flag[n]!='flag2' -> error
-            //TODO: check if timerange has initial transaction and charging one for this conversion
             for (var j = 0; j < flag.length; j++) {
                 if (transaction[flag[j]].NETMAIN === "flag2") {
                     transaction[flag[j]].NETMAIN = transaction[i].NETAMT;
@@ -196,11 +178,9 @@ function convert(data, callback) {
 }
 
 function getHeader(data) {
-    console.log(data.length == 0);
     if (data.length == 0) return [];
     var result = Object.keys(data[0]);
     for (var i = 1; i < data.length; i++) {
-        //TODO: check index to be in correct range
         var keys = Object.keys(data[i]);
         for (var j = 0; j < keys.length; j++) {
             if (result.indexOf(keys[j]) == -1) {
