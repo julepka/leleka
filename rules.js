@@ -1,3 +1,9 @@
+/*
+* Copyright (c) 2015 Iuliia Potapenko
+* Distributed under the GNU GPL v3.
+* For full terms see http://www.gnu.org/licenses/gpl or LICENSE.txt file.
+*/
+
 exports.isOtherCurrency = isOtherCurrency;
 exports.isConvertOut = isConvertOut;
 exports.isConvertIn = isConvertIn;
@@ -16,8 +22,6 @@ function isOtherCurrency(trans, cur) {
 
 function isConvertOut(trans, cur) {
     if (trans.EMAIL === undefined &
-        //TODO: add processing of currency conversions that were made by hands
-        //trans.TYPE.substring(0, 9) === "Transfer " &
         trans.TYPE === 'Currency Conversion (debit)' &
         trans.NAME === "To " + cur.cur &
         trans.AMT < 0 & trans.NETAMT < 0 &
@@ -28,7 +32,6 @@ function isConvertOut(trans, cur) {
 
 function isConvertIn(trans, cur) {
     if (trans.EMAIL === undefined &
-        //trans.TYPE.substring(0, 9) === "Transfer " &
         trans.TYPE === 'Currency Conversion (credit)' &
         trans.NAME.substring(0, 5) === "From " &
         trans.AMT > 0 & trans.NETAMT > 0 &
@@ -50,7 +53,6 @@ function isBuyCurrencyOut(trans, cur) {
 
 function isBuyCurrencyIn(trans, cur) {
     if (trans.EMAIL === undefined &
-            //trans.TYPE.substring(0, 9) === "Transfer " &
         trans.TYPE === 'Currency Conversion (credit)' &
         trans.NAME === "From " + cur.cur &
         trans.AMT > 0 & trans.NETAMT > 0 &
@@ -66,23 +68,3 @@ function isBuyOperation(trans, cur) {
         return true;
     } else return false;
 }
-
-//function isConvertOutNotAuto(trans) {
-//    if (trans.EMAIL === undefined &
-//        trans.TYPE.substring(0, 9) === "Transfer " &
-//        trans.NAME === "To U.S. Dollar" &
-//        trans.AMT < 0 & trans.NETAMT < 0 &
-//        trans.CURRENCYCODE !== "USD") {
-//        return true;
-//    } else return false;
-//}
-//
-//function isConvertInNotAuto(trans) {
-//    if (trans.EMAIL === undefined &
-//        trans.TYPE.substring(0, 9) === "Transfer " &
-//        trans.NAME.substring(0, 5) === "From " &
-//        trans.AMT > 0 & trans.NETAMT > 0 &
-//        trans.CURRENCYCODE === "USD") {
-//        return true;
-//    } else return false;
-//}
