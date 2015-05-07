@@ -1,6 +1,63 @@
-### Leleka
+# leleka - PayPal Transactions Processing
 
-Application is launched online on heroku. Can not publish a link because of security issues. Link will be provided later.
+This project allows you to get your PayPal transactions easier than using a website. The main feature is that you can filter currency conversion transactions. Just launch the server and use simple web-interface. Enter your information and get .csv file as a result. [Try it now!](http://paypalprocess.herokuapp.com/)
+
+## Content
+
+* [Installation](#installation)
+* [User Guide](#userguide)
+* [Code Description](#codedescription)
+* [Finding Bugs](#findingbugs)
+* [Related Resources](#relatedresources)
+
+![Picture](https://github.com/julepka/leleka/blob/master/app_screenshot.png)
+
+## <a name="installation"></a>Installation
+
+1. Install Node.js
+2. Run `npm install` from application directory
+3. Run `node server.js`
+4. Open in browser `http://localhost:5000/` and everything is ready to work
+
+If you have any troubles with the first or the second steps see the following links:
+- [How to install Node.js](http://howtonode.org/how-to-install-nodejs)
+- [npm installation guide](https://docs.npmjs.com/getting-started/installing-node)
+
+## <a name="userguide"></a>User Guide
+
+### API Credentials
+
+Getting transactions is available for **business accounts only**. This is not the application restriction, this restriction is set by PayPal. To get transactions you need to know your API Credentials that are avaliable for business accounts only.
+
+[Learn how to get your PayPal API Credentials](https://developer.paypal.com/docs/classic/api/apiCredentials/)
+
+Application supports Sandbox accounts and Sandbox API Credentials. To get Sandbox API Credentials select `Sandbox > Accounts`, then choose one of business account, click on it and go to `Profile > API Credentials`
+
+### Dates
+
+You need to enter start and end date for transaction list. Transactions information is stored in [GMT](http://en.wikipedia.org/wiki/Greenwich_Mean_Time) format on PayPal servers. That is why you need to convert your time to GMT format. You can use any time zone converter like [this one](http://www.timezoneconverter.com/cgi-bin/tzc.tzc).
+
+Please, use Chrome, Opera, Safari or other browsers that support datetime-local field.
+
+### Settings
+
+#### Filtering transactions
+
+There two fields about main currency information. 
+
+If you *don't want to filter* currency convertion transactions just leave them empty. In that case you will get transaction list without any modifications.
+
+If you *want to filter* currency convertion transactions you need to fill both fields. If you are not sure about name of currency and its abbreviation, please, check [currency.txt](https://github.com/julepka/leleka/blob/master/currency.txt). This file may need updates in future, so to be 100% sure you can see [PayPal currency information](https://developer.paypal.com/docs/classic/api/currency_codes/).
+
+#### Sandbox account
+
+Application supports sandbox accounts. You can use sandbox account to check the work of the application with no security risks for your real account. 
+
+[Learn more about PayPal Sandbox Accounts](https://developer.paypal.com/webapps/developer/applications/accounts)
+
+### Example
+
+![Picture](https://github.com/julepka/leleka/blob/master/app_screenshot_example.png)
 
 #### Output example
 
