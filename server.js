@@ -42,10 +42,6 @@ function getTransactions(req, res) {
         //res.sendFile(__dirname + '/output.csv');
     }
     console.log(req.query);
-    //TODO: make conversion to and from GMT if needed
-    //new Date(new Date(s).getTime() + new Date().getTimezoneOffset() * 60000).toJSON()
-    //var t = new Date(req.query.date.concat(':00.000Z'));
-    //console.log(t.getTime());
     if (checkCredentialsReq(req.query)) {
         if(req.query.sandbox == "on") {
             main.makeCSV({username: req.query.username, password: req.query.password, signature: req.query.signature},

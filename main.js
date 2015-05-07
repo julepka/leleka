@@ -10,14 +10,6 @@ var fs = require('fs');
 var tr = [];
 var rules = require('./rules.js');
 
-// CREDENTIALS EXAMPLE
-//var credentials = {
-//    username: 'address_api1.mail.com',
-//    password: 'QHZE9GW6LZ2GTQWQ',
-//    signature: 'AQU0e5vuZCvSg-XJploSa.sGUDlpAkarGzBHs8tpshLhz1LRC8z.qaGH'
-//};
-
-
 function makeCSV(credentials, date, callback, currency) {
 
     var paypal = new PayPal(credentials);
@@ -99,6 +91,7 @@ function processTransactions(error, transactions, currency, callback) {
         console.log('Error getting transactions. Transactions list is undefined');
     } else if (transactions.length === 0) {
         console.log('Transactions list is empty');
+        convert([], callback);
     } else {
         convert(clean(transactions, currency), callback);
     }
@@ -157,37 +150,26 @@ function clean (transaction, currency) {
             console.log('isBuyOperation');
             console.log(buyflag);
             for (var j = 0; j < buyflag.length; j++) {
-                //console.log(transaction[buyflag[j]]);
-                //console.log(transaction[i]);
                 if (transaction[buyflag[j]].EMAIL === "buyflag2" &
                     transaction[buyflag[j]].NAME === -transaction[i].AMT) {
                     transaction[buyflag[j]].EMAIL = transaction[i].EMAIL;
                     transaction[buyflag[j]].TYPE = transaction[i].TYPE;
                     transaction[buyflag[j]].NAME = transaction[i].NAME;
                     flag.splice(j, 1);
-                    //console.log(transaction[buyflag[j]]);
                     result.push(transaction[buyflag[j]]);
                     break;
                 }
             }
-            
-        //} else if (isConvertOutNotAuto()) {
-        //    //TODO: Currency conversion was requested by hands
-        //    //It means that the amount can very unexpectedly
-        //
-        //} else if (isConvertOutNotAuto()) {
 
         } else {
             transaction[i].NETMAIN = transaction[i].NETAMT;
             result.push(transaction[i]);
         }
     }
-    //TODO: check if flag[] is empty
     return result;
 }
 
 function convert(data, callback) {
-    //TODO: check if data is not empty
     var table = [];
     var headers = getHeader(data)
     table.push(headers);
@@ -203,7 +185,6 @@ function convert(data, callback) {
         table.push(row);
     }
 
-    //TODO: what error can be here?
     csv.writeToString(table, {
         headers: true
     }, function (err, data) {
@@ -215,6 +196,8 @@ function convert(data, callback) {
 }
 
 function getHeader(data) {
+    console.log(data.length == 0);
+    if (data.length == 0) return [];
     var result = Object.keys(data[0]);
     for (var i = 1; i < data.length; i++) {
         //TODO: check index to be in correct range
