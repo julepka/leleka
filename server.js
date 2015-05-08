@@ -39,7 +39,6 @@ function getTransactions(req, res) {
         res.header('content-type', 'text/csv');
         res.write(data);
         res.end();
-        //res.sendFile(__dirname + '/output.csv');
     }
     console.log(req.query);
     if (checkCredentialsReq(req.query)) {

@@ -171,9 +171,6 @@ function convert(data, callback) {
         headers: true
     }, function (err, data) {
         callback(data);
-        //fs.writeFileSync('output.csv', data);
-        //return console.log(data);
-        //callback();
     });
 }
 
