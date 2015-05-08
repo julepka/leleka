@@ -6,8 +6,28 @@ This project allows you to get your PayPal transactions easier than using a webs
 
 * [Installation](#installation)
 * [User Guide](#userguide)
+  * [API Credentials](#apicredentials)
+  * [Dates](#dates)
+  * [Settings](#settings)
+    * [Filtering Transactions](#filteringtransactions)
+    * [Sandbox Account](#sandboxaccount)
+  * [Example](#example1)
 * [Code Description](#codedescription)
+  * [server.js](#serverjs)
+  * [main.js](#mainjs)
+  * [rules.js](#rulesjs)
+  * [validate.js](#validatejs)
+  * [index.html](#indexhtml)
+  * [SSL](#ssl)
+  * [Filter Logic](#filterlogic)
+    * [Description](#description)
+    * [Algorithm](#algorithm)
+    * [Implementation](#implementation)
+    * [Example](#example2)
 * [Finding Bugs](#findingbugs)
+  * [PayPal Transactions Format and API](#paypaltransactionsformatandapi)
+  * ["flag" in Output File](#flaginoutputfile)
+* [Related Resources](#relatedresources)
 
 ![Picture](https://github.com/julepka/leleka/blob/master/examples/app_screenshot.png)
 
@@ -20,53 +40,54 @@ This project allows you to get your PayPal transactions easier than using a webs
 
 If you have any troubles with the first or the second steps see the following links:
 - [How to install Node.js](http://howtonode.org/how-to-install-nodejs)
+- [Download Node.js from official website](https://nodejs.org/download/)
 - [npm installation guide](https://docs.npmjs.com/getting-started/installing-node)
 
 ## <a name="userguide"></a>User Guide
 
-### API Credentials
+### <a name="apicredentials"></a>API Credentials
 
-Getting transactions is available for **business accounts only**. This is not the application restriction, this restriction is set by PayPal. To get transactions you need to know your API Credentials that are avaliable for business accounts only.
+Getting transactions is available for **business accounts only**. This is not the application restriction, this restriction is set by PayPal. To get transactions you need to know your API Credentials that are available for business accounts only.
 
 [Learn how to get your PayPal API Credentials](https://developer.paypal.com/docs/classic/api/apiCredentials/)
 
 Application supports Sandbox accounts and Sandbox API Credentials. To get Sandbox API Credentials select `Sandbox > Accounts`, then choose one of business account, click on it and go to `Profile > API Credentials`
 
-### Dates
+### <a name="dates"></a>Dates
 
 You need to enter start and end date for transaction list. Transactions information is stored in [GMT](http://en.wikipedia.org/wiki/Greenwich_Mean_Time) format on PayPal servers. That is why you need to convert your time to GMT format. You can use any time zone converter like [this one](http://www.timezoneconverter.com/cgi-bin/tzc.tzc).
 
 Please, use Chrome, Opera, Safari or other browsers that support datetime-local field.
 
-### Settings
+### <a name="settings"></a>Settings
 
-#### Filtering transactions
+#### <a name="filteringtransactions"></a>Filtering Transactions
 
-Filtering transactions work very well if your account make currency convertions automatically. It also works if you convert each transactions separately by hands. It will not work if you gather (store) some other currency on your account from several transactions and then decide to convert it.
+Filtering transactions work very well if your account makes currency conversions automatically. It also works if you convert each transaction separately by hands. It will not work if you gather (store) some other currency on your account from several transactions and then decide to convert it.
 
 There two fields about main currency information. 
 
-If you *don't want to filter* currency convertion transactions just leave them empty. In that case you will get transaction list without any modifications.
+If you *don't want to filter* currency conversion transactions just leave them empty. In that case you will get transaction list without any modifications.
 
-If you *want to filter* currency convertion transactions you need to fill both fields. If you are not sure about name of currency and its abbreviation, please, check [currency.txt](https://github.com/julepka/leleka/blob/master/currency.txt). This file may need updates in future, so to be 100% sure you can see [PayPal currency information](https://developer.paypal.com/docs/classic/api/currency_codes/).
+If you *want to filter* currency conversion transactions you need to fill both fields. If you are not sure about name of currency and its abbreviation, please, check [currency.txt](https://github.com/julepka/leleka/blob/master/currency.txt). This file may need updates in the future, so to be 100% sure you can see [PayPal currency information](https://developer.paypal.com/docs/classic/api/currency_codes/).
 
-#### Sandbox account
+#### <a name="sandboxaccount"></a>Sandbox Account
 
 Application supports sandbox accounts. You can use sandbox account to check the work of the application with no security risks for your real account. 
 
 [Learn more about PayPal Sandbox Accounts](https://developer.paypal.com/webapps/developer/applications/accounts)
 
-### Example
+### <a name="example1"></a>Example
 
 ![Picture](https://github.com/julepka/leleka/blob/master/examples/app_screenshot_example.png)
 
-Here you can see some sandbox API Credentials. I needed to get the result for March 9, 2015, 19:30 (7:30 PM), PDT. So I had to enter March 10, 2015, 2:30 (2:30 AM), GMT. I entered currency name and abbreviation to filter result.
+Here you can see some sandbox API Credentials. I needed to get the result for March 9, 2015, 19:30 (7:30 PM), PDT. So, I had to enter March 10, 2015, 2:30 (2:30 AM), GMT. I entered currency name and abbreviation to filter result.
 
-To see how filtering of currency convertion transactions works, compare the following output file for the example above:
+To see how filtering of currency conversion transactions works, compare the following output file for the example above:
 - [Output without filtering](https://github.com/julepka/leleka/blob/master/examples/example_no_filter.csv)
 - [Output with filtering](https://github.com/julepka/leleka/blob/master/examples/example_filter.csv)
 
-So filter converts three transactions to one transaction and adds new column to the output. If buyer payed 200 RUB, he was charched -17.8 RUB fee, seller recieves 182.2 RUB that equals 5.46 USD. So the result of converting three transactions into one has information of the first payment plus new column with main currency equivalent.
+So filter converts three transactions to one transaction and adds new column to the output. If buyer payed 200 RUB, he was charged -17.8 RUB fee, seller recieved 182.2 RUB that equals 5.46 USD. So the result of converting three transactions into one has information of the first payment plus new column with main currency equivalent.
 
 Converts this three transactions:
 
@@ -82,7 +103,7 @@ To this one:
 Mon Mar 09 2015 19:41:13 GMT-0700 (PDT),GMT,Payment,buyer-russia@mail.com,Makarova Anna,9T1150232C883021U,Completed,200,RUB,-17.8,182.2,5.46
 ```
 
-If you've got "flag" in the last column, it means that something went wrong. Try to change time range a little bit. This problem is extremely rare for automatic currency convertion.
+If you've got "flag" in the last column, it means that something went wrong. Try to change time range a little bit. This problem is extremely rare for automatic currency conversion.
 
 When application's work is done, the result file will be downloaded automatically. If the list of transactions is empty, you will get an empty file. If you have made a mistake in API Credentials you will also get an empty file. Please, after clicking the `Submit` button wait until file is downloaded. It takes some time.
 
@@ -102,7 +123,7 @@ To start an application you need to run `node server.js` in application folder. 
 
 Input data is coming from *index.html*. As a result user gets .csv file that is downloaded automatically.
 
-### server.js
+### <a name="serverjs"></a>server.js
 
 It is core file of the application. It uses *main.js* and *index.html*. It also has an option to use SSL. To use SSL uncomment three lines that are shown in code below. Server will use 5000 port. This is the main part of *server.js*:
 
@@ -128,34 +149,34 @@ var server = http.createServer(app);
 server.listen(process.env.PORT || 5000);
 ```
 * **`renderPage(req, res)`** Renders index.html.
-* **`getTransactions(req, res)`** Sets result output parametrs and passes input data from *index.html* to *main.js*.
+* **`getTransactions(req, res)`** Sets result output parameters and passes input data from *index.html* to *main.js*.
 * **`checkCredentialsReq(req)`** Returns *false* if any of needed fields is empty.
 
-### main.js
+### <a name="mainja"></a>main.js
 
 The main data operations are described in this file, it has main business logic of the application.
 
 * **`makeCSV(credentials, date, callback, currency)`** Gets transactions list using *paypal-classic-api* and passes it to currency convertion filter or to output depending on input data. It is called from *server.js*.
-* **`createTransactions(paypal, startRaw, endRaw, callback, recursionNumber)`** Makes a request to PayPal to get transactions. Maximum number of transactions that PayPal can send in respons is 100. If the number of received transactions is 100 then function uses recursion to get all transactions and adds them to one list.
-* **`processTransactions(error, transactions, currency, callback)`** Checks if transactions list is valid. If the list is empty it calls a function to create an empty output file. If there are transactions in the list, function passes them to currency convertion filter and then to output.
-* **`clean (transaction, currency)`** Is currency convertion filter. It returns a list of transactions that is filtered. It uses *rules.js* to detect currency convertion transactions. It stores this transactions in separate lists and adds flags to NETMAIN column.
+* **`createTransactions(paypal, startRaw, endRaw, callback, recursionNumber)`** Makes a request to PayPal to get transactions. Maximum number of transactions that PayPal can send in respons is 100. If the number of received transactions is 100, then function uses recursion to get all transactions and adds them to one list.
+* **`processTransactions(error, transactions, currency, callback)`** Checks if transactions list is valid. If the list is empty it calls a function to create an empty output file. If there are transactions in the list, function passes them to currency conversion filter and then to output.
+* **`clean (transaction, currency)`** Is currency conversion filter. It returns a filtered list of transactions. It uses *rules.js* to detect currency conversion transactions. It stores these transactions in separate lists and adds flags to NETMAIN column.
 * **`convert(data, callback)`** Converts list of transactions to .csv file using `fast-csv`. 
 * **`function getHeader(data)`** Return a list of table headers.
 
-### rules.js
+### <a name="rulesjs"></a>rules.js
 
-This file contains 6 rules that detect currency convertion transactions. To do that functions check fields of thransaction. This file is used by *main.js*.
+This file contains 6 rules that detect currency conversion transactions. Functions check fields of transaction to detect conversions. This file is used by *main.js*.
 
-* **`isOtherCurrency(trans, cur)`** Returns true for the first transaction in currency convertion process, when someone pays you money in other currency.
-* **`isConvertOut(trans, cur)`** Returns true for currency convertion transaction, when PayPal takes away money to convert to other currency. This function is for situation when someone payed you in other currency.
-* **`isConvertIn(trans, cur)`** Returns true for currency convertion transaction, when PayPal gives you back money in your currency after converting from other currency. This function is for situation when someone payed you in other currency.
-* **`isBuyOperation(trans, cur)`** Returns true for the first transaction in currency convertion process, when you pay someone who accepts other currency than yours.
-* **`isBuyCurrencyOut(trans, cur)`** Returns true for currency convertion transaction, when PayPal takes away money to convert to other currency. This function is for situation when you payed someone in other currency.
-* **`isBuyCurrencyIn(trans, cur)`** Returns true for currency convertion transaction, when PayPal gives you back money in your currency after converting from other currency. This function is for situation when you payed someone in other currency.
+* **`isOtherCurrency(trans, cur)`** Returns true for the first transaction in currency conversion process, when someone pays you money in other currency.
+* **`isConvertOut(trans, cur)`** Returns true for currency conversion transaction, when PayPal takes away money to convert to other currency. This function is for situation when someone paid you in other currency.
+* **`isConvertIn(trans, cur)`** Returns true for currency conversion transaction, when PayPal gives you back money in your currency after converting from other currency. This function is for situation when someone paid you in other currency.
+* **`isBuyOperation(trans, cur)`** Returns true for the first transaction in currency conversion process, when you pay someone who accepts other currency than yours.
+* **`isBuyCurrencyOut(trans, cur)`** Returns true for currency conversion transaction, when PayPal takes away money to convert to other currency. This function is for situation when you paid someone in other currency.
+* **`isBuyCurrencyIn(trans, cur)`** Returns true for currency conversion transaction, when PayPal gives you back money in your currency after converting from other currency. This function is for situation when you paid someone in other currency.
 
-If the format of PayPal fields changes in future, this rules will have to be modified. And function that uses this rules will need modifications too.
+If the format of PayPal fields changes in the future, these rules will have to be modified, and function that uses these rules will need modifications too.
 
-### validate.js
+### <a name="validatejs"></a>validate.js
 
 Application uses .validate (jQuery Validation Plugin) to check if input data is correct:
 - *Username* is not empty
@@ -197,7 +218,7 @@ Application uses .validate (jQuery Validation Plugin) to check if input data is 
     messages: { ... 
 ```
 
-### index.html
+### <a name="indexhtml"></a>index.html
 
 User interface has `<input type="datetime-local" name="date"/>` so users should use Chrome, Opera, Safari or other browsers that support `datetime-local` input.
 
@@ -219,7 +240,7 @@ User interface has `<input type="datetime-local" name="date"/>` so users should 
 </form>
 ```
 
-### SSL
+### <a name="ssl"></a>SSL
 
 To use SLL you need to uncomment the following 3 lines in *server.js*:
 
@@ -235,11 +256,11 @@ And comment the following line:
 var server = http.createServer(app);
 ```
 
-Place you key and certificate files in *ssl* directory. You can use the same names as shown above: *server.key* and *server.crt* Files that are in this derictory by default are an example. You can use them to see that everything works and then replace them with real ssl key and rectificate.
+Place you key and certificate files in *ssl* directory. You can use the same names as shown above: *server.key* and *server.crt* Files that are in this directory by default are an example. You can use them to see that everything works and then replace them with real ssl key and certificate.
 
-### Filter logic
+### <a name="filterlogic"></a>Filter Logic
 
-#### Description
+#### <a name="description"></a>Description
 
 If you give/get money using other currency than the main currency of your account, PayPal creates 3 transactions instead of one:
 - Original transaction in other currency
@@ -268,7 +289,7 @@ TYPE                        | EMAIL                 | NAME               | AMT  
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------ | -------
 Payment                     | buyer-russia@mail.com | Makarova Anna      | 200    | RUB          | 182.2  | 5.46
 
-#### Algorithm:
+#### <a name="algorithm"></a>Algorithm
 
 1. If all following conditions are true -> go to step 5
   - `CURRENCYCODE` is not a main currency
@@ -305,7 +326,7 @@ Payment                     | buyer-russia@mail.com | Makarova Anna      | 200  
 12. Set `NETMAIN` of flag list transaction = `NETAMT` of the following transaction
 13. Delete transaction from flag list and go to step 6
 
-#### Implementation
+#### <a name="implementation"></a>Implementation
 
 Step 1 check (rules.js):
 ```javascript
@@ -381,7 +402,7 @@ for (var j = 0; j < flag.length; j++) {
 }
 ```
 
-#### Example
+#### <a name="example2"></a>Example
 
 Incoming line [0]:
 
@@ -389,7 +410,7 @@ TYPE                        | EMAIL                 | NAME               | AMT  
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------ 
 Payment                     | buyer@mail.com        | Makarov Victor     | 100    | USD          | 100  
 
-Cheking conditions in step 1, 2, 3 shows that it is not a currency conversion transaction. So we add new column for it - `NETMAIN` and set `NETMAIN = NETAMT`. And then we add this transaction to result list. So we have:
+Cheking conditions in step 1, 2, 3 show that it is not a currency conversion transaction. So, we add new column for it - `NETMAIN` and set `NETMAIN = NETAMT`. And then we add this transaction to result list. So, we have:
 
 TYPE                        | EMAIL                 | NAME               | AMT    | CURRENCYCODE | NETAMT | NETMAIN
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------ | -------
@@ -401,7 +422,7 @@ TYPE                        | EMAIL                 | NAME               | AMT  
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------
 Payment                     | buyer-russia@mail.com | Makarova Anna      | 200    | RUB          | 182.2
 
-Conditions of step 1 return true. So we add index [1] to flag list. We set `NETMAIN = "flag"` and add transaction to result list. So our result list is:
+Conditions of step 1 return true. So, we add index [1] to flag list. We set `NETMAIN = "flag"` and add transaction to result list. So our result list is:
 
 TYPE                        | EMAIL                 | NAME               | AMT    | CURRENCYCODE | NETAMT | NETMAIN
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------ | -------
@@ -414,7 +435,7 @@ TYPE                        | EMAIL                 | NAME               | AMT  
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------
 Currency Conversion (debit) |                       | To U.S. Dollar     | -182.2 | RUB          | -182.2
 
-Conditions of step 2 return true. So we check if there is a transaction with index that is stored in flag list, that satisfy conditions in step 9. Our flag list is [1], so we check transaction with index [1]. We see that current transaction [2] is connected to transaction [1]. So we set `NETMAIN` of transaction [1] = "flag2". We do not put current transaction to result table. Result table:
+Conditions of step 2 return true. So, we check if there is a transaction with index that is stored in flag list that satisfy conditions in step 9. Our flag list is [1], so we check transaction with index [1]. We see that current transaction [2] is connected to transaction [1]. So, we set `NETMAIN` of transaction [1] = "flag2". We do not put current transaction to result table. Result table:
 
 TYPE                        | EMAIL                 | NAME               | AMT    | CURRENCYCODE | NETAMT | NETMAIN
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------ | -------
@@ -427,7 +448,7 @@ TYPE                        | EMAIL                 | NAME               | AMT  
 --------------------------- | --------------------- | ------------------ | ------ | ------------ | ------
 Currency Conversion (credit)|                       | From Russian Ruble | 5.46   | USD          | 5.46
 
-Conditions of step 3 return true. So we check if there is a transaction in flag list with `NETMAIN = "flag2"`. We find transaction [1]. Then we set `NETMAIN` of transaction [1] `= NETAMT` of current transaction transaction. And we delete transaction [1] from flag list.
+Conditions of step 3 return true. So, we check if there is a transaction in flag list with `NETMAIN = "flag2"`. We find transaction [1]. Then, we set `NETMAIN` of transaction [1] `= NETAMT` of current transaction transaction. And we delete transaction [1] from flag list.
  As a result flag list is empty. We converted 3 transactions in one. Result table:
 
 TYPE                        | EMAIL                 | NAME               | AMT    | CURRENCYCODE | NETAMT | NETMAIN
@@ -435,17 +456,34 @@ TYPE                        | EMAIL                 | NAME               | AMT  
 Payment                     | buyer@mail.com        | Makarov Victor     | 100    | USD          | 100    | 100 
 Payment                     | buyer-russia@mail.com | Makarova Anna      | 200    | RUB          | 182.2  | 5.46
 
-Check examples derictory - there are three files that show examples of application output.
+Check examples directory - there are three files that show examples of application output.
 
-## Finding bugs
+## <a name="findingbugs"></a>Finding Bugs
 
-### PayPal Transactions format and API
+### <a name="paypaltransactionsformatandapi"></a>PayPal Transactions Format and API
 
 The main problem of filtering is that it relies on text format of incoming transactions. Of course, PayPal can change the format and some functions will need to be rewritten. This problem may occur in the following functions:
 - clean (transaction, currency) in main.js
 - all functions in rules.js
-The other problem is that application uses PayPal Classic API that has well-done functionality, while recently PayPal introdused REST API that doesn't have functionality needed for this application at this time.
 
-### "flag" in output file
+The other problem is that application uses PayPal Classic API that has well-done functionality, while recently PayPal introduced REST API that doesn't have functionality needed for this application at this time.
 
-This situation may accur when application tries to filter list of transaction where at least one currency conversion transaction has less that 2 conversion transactions that are connected to it. So changing time interval a little bit will solve this problem. This  situation is extremly rare if your account has automated currency conversion because automated conversion takes less then a milisecond.
+### <a name="flaginoutputfile"></a>"flag" in Output File
+
+This situation may occur when application tries to filter list of transaction where at least one currency conversion transaction has less that 2 conversion transactions that are connected to it. So changing time interval a little bit will solve this problem. This  situation is extremely rare if your account has automated currency conversion because automated conversion takes less than a millisecond.
+
+## <a name="relatedresources"></a>Related Resources
+
+* [Try application online](http://paypalprocess.herokuapp.com/)
+* [Learn more about Heroku](https://www.heroku.com/about)
+* [Learn more about Node.js](https://nodejs.org/)
+* [Find usefull npm modules](https://www.npmjs.com/)
+* [Learn more about Express.js framework](https://www.npmjs.com/package/express)
+* [Learn more about fast-csv library](https://www.npmjs.com/package/fast-csv)
+* [Learn more about paypal-classic-api module](https://www.npmjs.com/package/paypal-classic-api)
+* [Read official PayPal Classic API documentation](https://developer.paypal.com/docs/classic/)
+* [Learn more about API Credentials](https://developer.paypal.com/docs/classic/api/apiCredentials/)
+* [Learn more about PayPal currency support](https://developer.paypal.com/docs/classic/api/currency_codes/)
+* [Create your PayPal Developer Account](https://developer.paypal.com/developer)
+* [Create diagrams with gliffy.com](https://www.gliffy.com)
+* [Learn more about SSL](http://en.wikipedia.org/wiki/Transport_Layer_Security)
